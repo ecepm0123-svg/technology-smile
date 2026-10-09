@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>科技の微笑</title>
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(22, 27, 46, 0.85);
+      --card-border: rgba(0, 240, 255, 0.2);
+      --neon-cyan: #00f0ff;
+      --neon-purple: #a855f7;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(0, 240, 255, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(168, 85, 247, 0.06) 0%, transparent 40%);
+    }
+
+    /* 頂部導航 */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 15, 25, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.9rem 1.5rem;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--neon-cyan), #ffffff, var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cyber-smile {
+      transform: rotate(90deg);
+      font-weight: bold;
+      color: var(--neon-cyan);
+      display: inline-block;
+    }
+
+    /* 主區域 */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* 狀態提示 */
+    .status-bar {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--neon-cyan);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--neon-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--neon-cyan);
+    }
+
+    /* 卡片列表網格 */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 10px 25px rgba(0, 240, 255, 0.2);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-family: monospace;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+    }
+
+    .card-url-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.6rem;
+      line-height: 1.4;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex-grow: 1;
+      margin-bottom: 1.2rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--neon-cyan);
+      font-weight: 600;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 0.8rem;
+    }
+
+    .card-footer span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 空狀態 / 錯誤訊息 */
+    .empty-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-muted);
+      border: 1px dashed var(--card-border);
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-container">
+      <a href="./" class="brand">
+        科技の微笑 <span class="cyber-smile">:)</span>
+      </a>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">
+        PROJECT PLATFORM
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="hero">
+      <h1>科技の微笑 // 專案導覽庫</h1>
+      <p>所有專案頁面已同步更新，點選卡片直接進入測試與展示</p>
+    </div>
+
+    <div class="status-bar">
+      <span class="status-dot"></span>
+      <span id="statusText">正在同步專案列表...</span>
+    </div>
+
+    <div class="project-grid" id="projectGrid">
+      <div class="empty-msg">讀取中，請稍候...</div>
+    </div>
+  </main>
+
+  <script>
+    // ========================================================
+    // ⚙️ 設定區（已直接幫你填好帳號）
+    // ========================================================
+    const GITHUB_USERNAME = "ecepm0123-svg";
+    const REPO_NAME = "technology-smile";
+    const TARGET_FOLDER = "project";
+    // ========================================================
+
+    const statusText = document.getElementById('statusText');
+    const projectGrid = document.getElementById('projectGrid');
+
+    async function loadProjects() {
+      const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${TARGET_FOLDER}`;
+
+      try {
+        const res = await fetch(apiUrl);
+        if (!res.ok) {
+          throw new Error(`找不到 [${TARGET_FOLDER}] 資料夾 (狀態碼: ${res.status})，請確認 Repo 中有建立 project 資料夾！`);
+        }
+
+        const items = await res.json();
+
+        // 濾出所有 .html 檔案 (例如 test.html)
+        const htmlFiles = items.filter(f => f.name.toLowerCase().endsWith('.html'));
+
+        if (htmlFiles.length === 0) {
+          projectGrid.innerHTML = `<div class="empty-msg">[${TARGET_FOLDER}] 資料夾中目前沒有任何 .html 頁面，放一個進去試試！</div>`;
+          statusText.textContent = "資料夾無 HTML 頁面";
+          return;
+        }
+
+        // 解析每個 HTML 檔案的內容（自動萃取 <title> 和 <meta name="description">）
+        const projectCards = await Promise.all(htmlFiles.map(async (file) => {
+          let title = file.name.replace(/\.html$/i, '');
+          let desc = "點擊開啟這個專案網頁進行體驗。";
+          
+          try {
+            const rawRes = await fetch(file.download_url);
+            const htmlText = await rawRes.text();
+            
+            // 解析 DOM
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+
+            // 抓 Title
+            if (doc.querySelector('title') && doc.querySelector('title').innerText.trim()) {
+              title = doc.querySelector('title').innerText.trim();
+            }
+
+            // 抓 Description
+            const metaDesc = doc.querySelector('meta[name="description"]');
+            if (metaDesc && metaDesc.getAttribute('content')) {
+              desc = metaDesc.getAttribute('content').trim();
+            }
+          } catch (e) {
+            console.warn(`讀取 ${file.name} 詳情失敗`, e);
+          }
+
+          return {
+            name: file.name,
+            title: title,
+            desc: desc,
+            // 點擊後跳轉的相對路徑：例如 ./project/test.html
+            link: `./${TARGET_FOLDER}/${file.name}`
+          };
+        }));
+
+        // 渲染卡片
+        projectGrid.innerHTML = '';
+        projectCards.forEach(proj => {
+          const card = document.createElement('a');
+          card.className = 'card';
+          card.href = proj.link;
+
+          card.innerHTML = `
+            <div class="card-top">
+              <span class="card-tag">HTML 專案</span>
+              <span class="card-url-hint">/${TARGET_FOLDER}/${proj.name}</span>
+            </div>
+            <div class="card-title">${proj.title}</div>
+            <div class="card-desc">${proj.desc}</div>
+            <div class="card-footer">
+              <span>立即開啟頁面</span>
+              <span>➔</span>
+            </div>
+          `;
+          projectGrid.appendChild(card);
+        });
+
+        statusText.textContent = `🟢 已同步 ${projectCards.length} 個 HTML 頁面！`;
+
+      } catch (err) {
+        statusText.textContent = "同步失敗";
+        projectGrid.innerHTML = `<div class="empty-msg" style="color: #ffaa00;">讀取錯誤：${err.message}</div>`;
+      }
+    }
+
+    loadProjects();
+  </script>
+</body>
+</html>
