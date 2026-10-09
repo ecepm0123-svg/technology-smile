@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>科技の微笑 // AI 影像生成核心</title>
+  <meta name="description" content="輸入咒語與提示詞，即刻生成未來感 AI 影像。">
+  <style>
+    :root {
+      --bg-color: #080c14;
+      --card-bg: rgba(18, 24, 43, 0.85);
+      --card-border: rgba(0, 240, 255, 0.25);
+      --neon-cyan: #00f0ff;
+      --neon-purple: #bd00ff;
+      --text-main: #f1f5f9;
+      --text-muted: #8b9bb4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(189, 0, 255, 0.08) 0%, transparent 40%);
+    }
+
+    /* 頂部標題 */
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, var(--neon-cyan), #fff, var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .cyber-smile {
+      transform: rotate(90deg);
+      font-weight: bold;
+      color: var(--neon-cyan);
+      display: inline-block;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    /* 主操作卡片 */
+    .container {
+      width: 100%;
+      max-width: 850px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 提示詞輸入框 */
+    .prompt-box {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--neon-cyan);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      height: 90px;
+      padding: 1rem;
+      background: rgba(8, 12, 20, 0.85);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      resize: vertical;
+      transition: all 0.3s;
+    }
+
+    textarea:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    }
+
+    /* 參數控制選項 */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: rgba(8, 12, 20, 0.85);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select:focus {
+      border-color: var(--neon-cyan);
+    }
+
+    /* 生成按鈕 */
+    .btn-generate {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      color: #080c14;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-generate:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(189, 0, 255, 0.6);
+      filter: brightness(1.1);
+    }
+
+    .btn-generate:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* 圖片展示預覽區 */
+    .preview-box {
+      margin-top: 2rem;
+      border: 1px dashed var(--card-border);
+      border-radius: 12px;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .preview-box img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.6);
+      display: none;
+    }
+
+    /* 讀取中動畫 */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(0, 240, 255, 0.2);
+      border-top-color: var(--neon-cyan);
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .actions-bar {
+      display: none;
+      margin-top: 1rem;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: var(--neon-cyan);
+      color: #080c14;
+    }
+
+    .back-home {
+      margin-top: 2rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .back-home:hover {
+      color: var(--neon-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>科技の微笑 <span class="cyber-smile">:)</span></h1>
+    <p class="subtitle">NEURAL IMAGE SYNTHESIS CORE // 免費無限 AI 生圖</p>
+  </header>
+
+  <main class="container">
+    <div class="prompt-box">
+      <label for="promptInput">輸入提示詞 (Prompt)：支援中文或英文</label>
+      <textarea id="promptInput" placeholder="例如：賽博龐克風格的機械微笑姬、未來的霓虹城市、星際黑洞太空船..."></textarea>
+    </div>
+
+    <div class="options-grid">
+      <div>
+        <label for="styleSelect">風格預設 (Style)</label>
+        <select id="styleSelect">
+          <option value="">原始寫實風格 (Default)</option>
+          <option value=", cyberpunk style, 8k, neon lights, highly detailed">賽博朋克 (Cyberpunk)</option>
+          <option value=", anime aesthetic, makoto shinkai style, vibrant colors">日系動漫 (Anime)</option>
+          <option value=", cinematic photography, unreal engine 5 render, hyperrealistic">電影寫實 (Cinematic)</option>
+          <option value=", sci-fi futuristic concept art, digital painting">科幻概念 (Sci-Fi)</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="sizeSelect">圖片尺寸比例 (Ratio)</label>
+        <select id="sizeSelect">
+          <option value="1024x1024">正方形 1:1 (1024x1024)</option>
+          <option value="1280x720">電腦桌布 16:9 (1280x720)</option>
+          <option value="720x1280">手機桌布 9:16 (720x1280)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-generate" id="btnGen" onclick="generateAIImage()">
+      ⚡ 啟動神經網路生圖
+    </button>
+
+    <div class="preview-box">
+      <div id="placeholderText" style="color: var(--text-muted); font-size: 0.95rem;">
+        請在上方輸入畫面描述，點擊「啟動生圖」
+      </div>
+
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p style="color: var(--neon-cyan);">量子核心正在渲染影像中，請稍候約 5~10 秒...</p>
+      </div>
+
+      <img id="resultImage" alt="AI Generated Image" onload="onImageLoaded()" onerror="onImageError()">
+    </div>
+
+    <div class="actions-bar" id="actionsBar">
+      <a class="btn-action" id="downloadBtn" target="_blank" download="ai-smile.jpg">💾 下載高畫質圖片</a>
+      <button class="btn-action" onclick="copyImageLink()">🔗 複製圖片直鏈</button>
+    </div>
+  </main>
+
+  <a href="../" class="back-home">← 返回專案庫首頁</a>
+
+  <script>
+    let currentImageUrl = "";
+
+    function generateAIImage() {
+      const promptInput = document.getElementById('promptInput').value.trim();
+      if (!promptInput) {
+        alert("請先輸入想要生成的圖片描述！");
+        return;
+      }
+
+      const style = document.getElementById('styleSelect').value;
+      const [width, height] = document.getElementById('sizeSelect').value.split('x');
+
+      // 組合提示詞與隨機種子 (Seed)
+      const fullPrompt = encodeURIComponent(promptInput + style);
+      const randomSeed = Math.floor(Math.random() * 1000000);
+
+      // 免費開源 Pollinations AI 影像端點
+      currentImageUrl = `https://image.pollinations.ai/prompt/${fullPrompt}?width=${width}&height=${height}&seed=${randomSeed}&nologo=true`;
+
+      // 介面切換到讀取中
+      document.getElementById('placeholderText').style.display = 'none';
+      document.getElementById('resultImage').style.display = 'none';
+      document.getElementById('actionsBar').style.display = 'none';
+      document.getElementById('loadingSpinner').style.display = 'block';
+      document.getElementById('btnGen').disabled = true;
+
+      // 載入圖片
+      const img = document.getElementById('resultImage');
+      img.src = currentImageUrl;
+    }
+
+    function onImageLoaded() {
+      document.getElementById('loadingSpinner').style.display = 'none';
+      const img = document.getElementById('resultImage');
+      img.style.display = 'block';
+      document.getElementById('actionsBar').style.display = 'flex';
+      document.getElementById('downloadBtn').href = currentImageUrl;
+      document.getElementById('btnGen').disabled = false;
+    }
+
+    function onImageError() {
+      document.getElementById('loadingSpinner').style.display = 'none';
+      document.getElementById('placeholderText').style.display = 'block';
+      document.getElementById('placeholderText').textContent = "⚠️ 渲染失敗，可能是伺服器繁忙，請再按一次重試！";
+      document.getElementById('btnGen').disabled = false;
+    }
+
+    function copyImageLink() {
+      if (!currentImageUrl) return;
+      navigator.clipboard.writeText(currentImageUrl).then(() => {
+        alert("已成功複製圖片直鏈！");
+      });
+    }
+  </script>
+</body>
+</html>
